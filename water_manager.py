@@ -24,8 +24,8 @@
 
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QFileDialog
-from qgis.core import QgsProject, Qgis
+from qgis.PyQt.QtWidgets import QAction, QFileDialog, QDialog
+from qgis.core import QgsProject, Qgis, QgsMapLayer
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -181,6 +181,44 @@ class waterManager:
         filename, _filter = QFileDialog.getSaveFileName(
             self.dlg, "Select output file ","", '*.csv')
         self.dlg.lineEdit.setText(filename)
+    def action_on_ok(self):
+        
+        """Handles the OK button press action."""
+        # Check if the OK button was pressed
+        filename = self.dlg.lineEdit.text()
+        if not filename:
+            self.iface.messageBar().pushMessage(
+                "Error", "No output file specified.", level=Qgis.Critical, duration=5)
+            return
+
+        # Get the selected layer index and layer
+        selectedLayerIndex = self.dlg.comboBoxCom.currentIndex()
+        if selectedLayerIndex < 0:
+            self.iface.messageBar().pushMessage(
+                "Error", "No community layer selected.", level=Qgis.Critical, duration=5)
+            return
+
+        layers = QgsProject.instance().layerTreeRoot().children()
+        selectedLayer = layers[selectedLayerIndex].layer()
+
+        # Write data to the output file
+        try:
+            with open(filename, 'w') as output_file:
+                fieldnames = [field.name() for field in selectedLayer.fields()]
+                # Write header
+                output_file.write(','.join(fieldnames) + '\n')
+
+                # Write feature attributes
+                for feature in selectedLayer.getFeatures():
+                    output_file.write(','.join(str(feature[field]) for field in fieldnames) + '\n')
+
+            self.iface.messageBar().pushMessage(
+                "Success", f"Output file written at {filename}", level=Qgis.Success, duration=3)
+        except Exception as e:
+            self.iface.messageBar().pushMessage(
+                "Error", f"An error occurred: {e}", level=Qgis.Critical, duration=5)
+  
+        
    
     def run(self):
         """Run method that performs all the real work"""
@@ -193,6 +231,7 @@ class waterManager:
         
             #clicked 
             self.dlg.pushButton.clicked.connect(self.select_output_file)
+            self.dlg.buttonBox.clicked.connect(self.action_on_ok)
 
             # Fetch the currently loaded layers
         layers = QgsProject.instance().layerTreeRoot().children()
@@ -216,23 +255,10 @@ class waterManager:
         self.dlg.show()
         # Run the dialog event loop
         result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
+        # def action_on_ok(self):
+                
 
-            filename = self.dlg.lineEdit.text()
-            with open(filename, 'w') as output_file:
-                selectedLayerIndex = self.dlg.comboBox.currectIndex()
-                selectedLayer = layers[selectedLayerIndex].layer()
-                fieldnames = [field.name() for field in selectedLayer.fields()]
-                #write header
-                line = ','.join(name for name in fieldnames) + '\n'
-                output_file.write(line)
-                #write feature attributes
-                for f in selectedLayer.getFeatures():
-                    line = ','.join(str(f[name]) for name in fieldnames) + '\n'
-                    output_file.write(line)
-            self.iface.messageBar().pushMessage(
-                "Success", "Output file writtten at " + filename,
-                level=Qgis.Success, duration=3
-            )
-             
+         
+
+
+ 
