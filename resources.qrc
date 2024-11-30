@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/water_manager" >
+    <qresource prefix="/plugins/floods" >
         <file>icon.png</file>
     </qresource>
 </RCC>

@@ -1,12 +1,12 @@
 #/***************************************************************************
-# waterManager
+# Floods
 #
-# this plugin willl allow users to load community dataset and water source dataset and process and give them the results for the nearest water sorce for communities
+# Find flood prone areas
 #							 -------------------
 #		begin				: 2024-11-30
 #		git sha				: $Format:%H$
-#		copyright			: (C) 2024 by group10
-#		email				: danielkasambala51@gmail.com
+#		copyright			: (C) 2024 by G10
+#		email				: g10@wetried.com
 # ***************************************************************************/
 #
 #/***************************************************************************
@@ -38,15 +38,15 @@ LOCALES =
 # translation
 SOURCES = \
 	__init__.py \
-	water_manager.py water_manager_dialog.py
+	floods.py floods_dialog.py
 
-PLUGINNAME = water_manager
+PLUGINNAME = floods
 
 PY_FILES = \
 	__init__.py \
-	water_manager.py water_manager_dialog.py
+	floods.py floods_dialog.py
 
-UI_FILES = water_manager_dialog_base.ui
+UI_FILES = floods_dialog_base.ui
 
 EXTRAS = metadata.txt icon.png
 
@@ -65,7 +65,7 @@ PEP8EXCLUDE=pydev,resources.py,conf.py,third_party,ui
 #	* Windows:
 #	  AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins'
 
-QGISDIR=C:\Users\Acer\AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins
+QGISDIR=C:\Users\Steve D\AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins
 
 #################################################
 # Normally you would not need to edit below here

@@ -8,9 +8,9 @@
 
 """
 
-__author__ = 'danielkasambala51@gmail.com'
+__author__ = 'g10@wetried.com'
 __date__ = '2024-11-30'
-__copyright__ = 'Copyright 2024, group10'
+__copyright__ = 'Copyright 2024, G10'
 
 import unittest
 
@@ -18,7 +18,7 @@ from qgis.PyQt.QtGui import QIcon
 
 
 
-class waterManagerDialogTest(unittest.TestCase):
+class FloodsDialogTest(unittest.TestCase):
     """Test rerources work."""
 
     def setUp(self):
@@ -31,12 +31,12 @@ class waterManagerDialogTest(unittest.TestCase):
 
     def test_icon_png(self):
         """Test we can click OK."""
-        path = ':/plugins/waterManager/icon.png'
+        path = ':/plugins/Floods/icon.png'
         icon = QIcon(path)
         self.assertFalse(icon.isNull())
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(waterManagerResourcesTest)
+    suite = unittest.makeSuite(FloodsResourcesTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 

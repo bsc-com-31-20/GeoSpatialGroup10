@@ -8,26 +8,26 @@
 
 """
 
-__author__ = 'danielkasambala51@gmail.com'
+__author__ = 'g10@wetried.com'
 __date__ = '2024-11-30'
-__copyright__ = 'Copyright 2024, group10'
+__copyright__ = 'Copyright 2024, G10'
 
 import unittest
 
 from qgis.PyQt.QtGui import QDialogButtonBox, QDialog
 
-from water_manager_dialog import waterManagerDialog
+from floods_dialog import FloodsDialog
 
 from utilities import get_qgis_app
 QGIS_APP = get_qgis_app()
 
 
-class waterManagerDialogTest(unittest.TestCase):
+class FloodsDialogTest(unittest.TestCase):
     """Test dialog works."""
 
     def setUp(self):
         """Runs before each test."""
-        self.dialog = waterManagerDialog(None)
+        self.dialog = FloodsDialog(None)
 
     def tearDown(self):
         """Runs after each test."""
@@ -49,7 +49,7 @@ class waterManagerDialogTest(unittest.TestCase):
         self.assertEqual(result, QDialog.Rejected)
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(waterManagerDialogTest)
+    suite = unittest.makeSuite(FloodsDialogTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
 

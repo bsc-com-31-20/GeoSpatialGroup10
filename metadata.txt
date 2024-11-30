@@ -3,14 +3,14 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=water management plugin
+name=floods
 qgisMinimumVersion=3.0
-description=this plugin willl allow users to load community dataset and water source dataset and process and give them the results for the nearest water sorce for communities
+description=Find flood prone areas
 version=0.1
-author=group10
-email=danielkasambala51@gmail.com
+author=G10
+email=g10@wetried.com
 
-about=This is a water management plugin which will allow user to load their dataset which are the community datasets and the water source datasets
+about=Use this to find flood prone areas given a river dataset and Enumeration area
 
 tracker=http://bugs
 repository=http://repo
