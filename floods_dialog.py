@@ -68,9 +68,18 @@ class FloodsDialog(QtWidgets.QDialog, FORM_CLASS):
     def run_buffer_analysis(self):
         """Perform buffer analysis on the river dataset in the database."""
         try:
+            # Get the buffer distance from the user
+            buffer_distance = self.bufferDistanceLineEdit.text()
+            if not buffer_distance.isdigit():
+                QMessageBox.warning(self, "Input Error", "Buffer distance must be a positive number.")
+                return
+
+            # Convert to numeric type
+            buffer_distance = float(buffer_distance) * 0.001
+
             # Call a function to perform buffer analysis
-            perform_buffer_analysis()
-            QMessageBox.information(self, "Success", "Buffer analysis completed and saved to the database!")
+            perform_buffer_analysis(buffer_distance)
+            QMessageBox.information(self, "Success", "Buffer analysis completed and merged with enumeration data!")
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Buffer analysis failed: {e}")
 
@@ -177,8 +186,8 @@ def save_layer_attributes(cursor, layer, table_name, dataset_type):
 #Ukuku kuli ntchito
 #eh
 
-def perform_buffer_analysis():
-    """Perform buffer analysis on the river dataset."""
+def perform_buffer_analysis(buffer_distance):
+    """Perform buffer analysis on the river dataset and intersect with enumeration data."""
     # Database connection parameters
     db_params = {
         "dbname": "g10",
@@ -188,26 +197,40 @@ def perform_buffer_analysis():
         "port": 5432,
     }
 
-    # Buffer parameters
-    buffer_distance = 0.001  # Buffer distance in CRS units (e.g., meters)
-
     # Connect to the database
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
 
-    # SQL query to create a buffer around the river dataset
+    # Step 1: Create buffer around the river dataset
     buffer_query = f"""
         DROP TABLE IF EXISTS river_buffer;
         CREATE TABLE river_buffer AS
         SELECT
             id,  -- Retain the original ID
             ST_Buffer(geom, {buffer_distance}) AS geom  -- Create buffer geometry
-        FROM river_dataset;  -- Replace with the name of your river dataset table
+        FROM river_dataset;
     """
     cursor.execute(buffer_query)
 
-    # Add a spatial index to the buffer table for performance
+    # Add spatial index to the buffer table
     cursor.execute("CREATE INDEX ON river_buffer USING GIST (geom);")
+
+    # Step 2: Perform intersection with enumeration dataset
+    intersection_query = f"""
+        DROP TABLE IF EXISTS intersection_output;
+        CREATE TABLE intersection_output AS
+        SELECT
+            a.id AS buffer_id,
+            b.id AS enum_id,
+            ST_Intersection(a.geom, b.geom) AS geom  -- Compute intersection geometry
+        FROM river_buffer AS a
+        JOIN enumeration_dataset AS b
+        ON ST_Intersects(a.geom, b.geom);
+    """
+    cursor.execute(intersection_query)
+
+    # Add spatial index to the intersection output table
+    cursor.execute("CREATE INDEX ON intersection_output USING GIST (geom);")
 
     # Commit and close the connection
     conn.commit()
